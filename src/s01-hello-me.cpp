@@ -1,8 +1,9 @@
+﻿
+
 #include <iostream>
 
-
-auto main() -> int
+int main()
 {
-    std::cout << "Hello, Martyna!\n";
-    return 0;
+    std::cout << "Hello World!\n";
 }
+
