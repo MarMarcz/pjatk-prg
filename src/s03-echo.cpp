@@ -3,14 +3,28 @@
 
 int main(int argc, char* argv[])
 {
-auto first = std::string{argv[1]};
-auto f = std::stoi(first);
-int x = argc;
 
-for ( int i=f; i <= x; i++)
+if(argv[1] == std::string{"-n"})
 {
-std::cout << i << "\n";
+	for (int i = 2; i <= argc; i++)
+	{
+	std::cout << argv[i] << " ";
+	}
 }
 
+if(argv[1] == std::string{"-l"})
+{
+	for( int i=2; i <= argc; i++)
+	{
+	std::cout << argv[i] << std::endl;
+	}
+}
+
+ else {
+	for(int i=1; i <= argc; i++)
+	{
+	std::cout << argv[i] << " ";
+	}
+}
 return 0;
 }
