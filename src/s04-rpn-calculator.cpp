@@ -59,6 +59,16 @@ auto evaluate_dividing(std::stack<double>& stack) -> void
     stack.push(a / b);
 }
 
+auto evaluate_dividing_int(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for +"};
+    }
+    int const b = pop_top(stack);
+    int const a = pop_top(stack);
+    stack.push(round(a / b));
+}
+
 auto evaluate_modulo(std::stack<double>& stack) -> void
 {
     if (stack.size() < 2) {
@@ -88,6 +98,15 @@ auto evaluate_sqrt(std::stack<double>& stack) -> void
     stack.push(std::sqrt(a));
 }
 
+auto evaluate_absolute(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 1) {
+        throw std::logic_error{"not enough operands for +"};
+    }
+    auto const a = pop_top(stack);
+    stack.push(std::abs(a));
+}
+
 auto make_args(int argc, char* argv[]) -> std::vector<std::string>
 {
     auto args = std::vector<std::string>{};
@@ -112,12 +131,16 @@ auto main(int argc, char* argv[]) -> int
 		evaluate_multiplying(stack);
 	    } else if (each == "/") {
 		evaluate_dividing(stack);
+	    } else if (each == "//") {
+                evaluate_dividing_int(stack);
 	    } else if (each == "%") {
 		evaluate_modulo(stack);
 	    } else if (each == "**") {
 		evaluate_power(stack);
 	    } else if (each == "sqrt") {
 		evaluate_sqrt(stack);
+	    }  else if (each == "abs") {
+                evaluate_absolute(stack);
             } else {
                 stack.push(std::stod(each));
             }
