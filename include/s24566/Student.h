@@ -1,17 +1,16 @@
 #include <iostream>
 #include <string>
-#pragma once
+#ifndef Student_h
+#define Student_h
 
-struct student
+struct Student
 {
 	std::string imie, nazwisko, numer_indeksu;
-	int aktualny_semestr;
+	int semestr;
 	double srednia_ocen;
 
 	std::string to_string();
 
-	student(std::string i, std::string n, std::string ni, int as, double so);
-
-
+	Student(std::string i, std::string n, std::string ni, int as, double so);
 };
-
+#endif
