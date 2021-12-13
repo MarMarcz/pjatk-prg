@@ -60,9 +60,44 @@ struct King : Person
 	King(std::string n, std::string s):Person(n, s)
 	{}
 };
-#endif
 
 std::string who_is_it( Person const& who )
 {
-	return who.to_string();
+        return who.to_string();
 }
+
+struct Greeting
+{
+        virtual std::string greet(Person const& x) const = 0;
+};
+
+struct Hello : Greeting
+{
+        std::string greet(Person const& x) const override
+        {
+                return ("Hello " + who_is_it(x) );
+        }
+
+	Hello() {};
+};
+
+struct Good_evening : Greeting
+{
+	std::string greet(Person const& x) const override
+	{
+		return ("Good evening " + who_is_it(x) );
+	}
+
+	Good_evening() {};
+};
+
+struct Farewell : Greeting
+{
+	std::string greet(Person const& x) const override
+	{
+		return ("Farewell " + who_is_it(x) );
+	}
+
+	Farewell() {};
+};
+#endif
