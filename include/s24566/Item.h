@@ -2,8 +2,6 @@
 #ifndef Item_h
 #define Item_h
 
-//IN PROGRESS
-
 struct Creature
 {
 	std::string name;
@@ -18,29 +16,29 @@ struct Creature
 
 struct Item //bazowa
 {
-	virtual void use_on( Creature& ) = 0;
-	virtual int strength() const;
+	virtual void use_on( Creature&, int ) = 0;
+	virtual int strength() const = 0;
 };
 
 struct Weapon : Item
 {
-	void use_on( Creature& x ) override
+	void use_on( Creature& c, int x ) override
 	{
-	x.hp--;
+		c.hp -= x;
 	}
 
 };
 
 struct Potion : Item
 {
-	void use_on( Creature& x ) override
+	void use_on( Creature& c, int x ) override
 	{
-	x.hp++;
+		c.hp += x;
 	}
 
 };
 
-struct Sword : Item
+struct Sword : Weapon
 {
 	int strength() const override
 	{
@@ -48,15 +46,15 @@ struct Sword : Item
 	}
 };
 
-struct Axe : Item
+struct Axe : Weapon
 {
 	int strength() const override
         {
                 return 3;
-        }
+	}
 };
 
-struct Bow : Item
+struct Bow : Weapon
 {
 	int strength() const override
         {
@@ -64,12 +62,22 @@ struct Bow : Item
         }
 };
 
-struct Health_potion : Item
+int used = 0; //how many times it was used (Health_potion)
+
+struct Health_potion : Potion
 {
 	int strength() const override
         {
-                return 4;
+		used += 1;
+		if( used >= 2)
+			return 0;
+		else
+                	return 4;
         }
 };
-
 #endif
+
+void show_monster_hp( Creature& c )
+{
+	std::cout << "Monster has: " << c.hp << "hp\n";
+}
