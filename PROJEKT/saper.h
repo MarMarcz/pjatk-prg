@@ -48,4 +48,40 @@ void wyswietl_wszystkie_pola()
 		std::cout << "\n";
 	}
 }
+
+short int ktore_pole(short int n_w, short int n_k) // na jakim polu z vectora bedziemy potem dzialac
+{
+	//IN PROGRESS
+	return 0;//zwracamy jakie to bedzie pole vectora
+}
+
+//Tu bedzie funkcja sprawdzania sasiadujach pol czy sa tam bomby
+
+auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora (Z, P, F)
+{
+	switch (op) //dzaialnie w zaleznosci od operatora
+	{
+		case 'Z': //oznacznei jako mina
+		{
+			v[k_p] = 'X'; //ocnacz te pole jako zaminowane X
+		}
+		break;
+		case 'P': //odkrywamy pole
+		{
+			//wywolaj funkcje sprawdz czy w okolo sa bomby
+			//sprawdz czy bomba jak tak to koniec gry
+		}
+		break;
+		case 'F': //zdjecie oznacznia pola jako zajetego przez mine
+		{
+			if (v[k_p] == 'X') //jesli zaznaczylsmy wczesniej jako zaminowane -> zdjejmij oznaczenie
+				v[k_p] = ' ';
+			else
+				std::cout << "Pole nie jest oznaczone jako zaminowane wiec nie mozna zdjac oznaczenia\n";
+		}
+		break;
+		default: std::cout << "Zly operator!\n"; //jesli ktos poda cos innego niz Z, P, F
+	}
+}
+
 //#endif
