@@ -13,7 +13,19 @@ int main()
 	short int nr_wiersza, nr_kolumny;
 	char operacja;
 
-	std::cin >> nr_wiersza >> nr_kolumny >> operacja; //tu musze dorobic obslugiwalnosc bledow
+	try {
+		std::cin >> nr_wiersza >> nr_kolumny >> operacja;
+
+		if (std::cin.fail() || nr_wiersza > 9 || nr_wiersza < 1 || nr_kolumny > 9 || nr_kolumny < 1)
+		{
+			std::cin.clear();
+			throw "Zle dane";
+		}
+	} catch (...) {
+		std::cout << "Zle dane!\n";
+		return 0;
+	}
+
 	akcja( ktore_pole(nr_wiersza, nr_kolumny), operacja);
 	wyswietl_wszystkie_pola();
 
