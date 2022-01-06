@@ -1,6 +1,7 @@
 #include <vector>
+#include <string>
 #include <algorithm> //zeby dzialalo fill
-#include <cstdlib> //zeby dzialalo rand()
+#include <cstdlib> //zeby dzialalo rand() i exit(0)
 #include <ctime> //zeby dzialalo srand()
 //#ifndef saper_h
 //#define saper_h
@@ -47,15 +48,143 @@ void wyswietl_wszystkie_pola()
 		wyswietl_wiersz();
 		std::cout << "\n";
 	}
+	for (char& each : v_bomb) //pokazuje kazdy element vectora v_bomb //POMOCNICZE na czas testow
+	{
+		std::cout << each;
+	}
 }
 
 short int ktore_pole(short int n_w, short int n_k) // na jakim polu z vectora bedziemy potem dzialac
+//czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do 81 pol wiec 80 index max
 {
 	//IN PROGRESS
-	return 0;//zwracamy jakie to bedzie pole vectora
+	return ( (n_w-1)*9 + (n_k-1) );//zwracamy jakie to bedzie pole vectora (index)
+	//obliczenie jak to zrobilam mam na karetce
 }
 
-//Tu bedzie funkcja sprawdzania sasiadujach pol czy sa tam bomby
+//Tu bedzie funkcja dla konca gry Przegranej + musze dorobic dla Wygranej
+
+
+short int sprawdz(std::string kierunek, short int k_p) //sprawdza czy w danym kierunku znajduje sie bomba
+{
+	if (kierunek == "prawo")
+	{
+		if (v_bomb[k_p + 1] == 'B') //jesli jest tam bomba to zwroc 1
+			return 1;
+		else
+			return 0; //jesli nie ma tam bomby to zwroc 0
+	}else if (kierunek == "lewo")
+	{
+		if (v_bomb[k_p - 1] == 'B')
+			return 1;
+		else
+			return 0;
+	}else if (kierunek == "gora")
+	{
+		if (v_bomb[k_p - 9] == 'B')
+			return 1;
+		else
+			return 0;
+	} else if (kierunek == "dol")
+	{
+		if (v_bomb[k_p + 9] == 'B')
+			return 1;
+		else
+			return 0;
+	} else if (kierunek == "lewo_gora")
+	{
+		if (v_bomb[k_p - 10] == 'B')
+			return 1;
+		else
+			return 0;
+	} else if (kierunek == "lewo_dol")
+	{
+		if (v_bomb[k_p + 8] == 'B')
+			return 1;
+		else
+			return 0;
+	}else if (kierunek == "prawo_gora")
+	{
+		if (v_bomb[k_p - 8] == 'B')
+			return 1;
+		else
+			return 0;
+	} else if (kierunek == "prawo_dol")
+	{
+		if (v_bomb[k_p + 10] == 'B')
+			return 1;
+		else
+			return 0;
+	}
+	else //na wszelki wypadek
+		return 0;
+
+}
+
+char ile(short int a) //sprawdza ile jest bomb i jakby przerzuca to na char ktory poleci potem do vecotra
+{
+	switch(a)
+	{
+		case 0: return '.';
+			break;
+		case 1: return '1';
+			break;
+		case 2: return '2';
+			break;
+		case 3: return '3';
+			break;
+		case 4: return '4';
+			break;
+		case 5: return '5';
+			break;
+		case 6: return '6';
+			break;
+		case 7: return '7';
+			break;
+		case 8: return '8'; //maksymalnie pole moze byc otoczone 8 bombami
+			break;
+		default: return '.'; //na wszelki wypadek deafultowy
+	}
+}
+
+char sprawdz_sasiadujace_pola(short int k_p) //funkcja sprawdzajaca sasiadujece pola zwracajaca ilosc bomb wokol lub . bo nie bedzie bomb
+{
+	short int ile_bomb; //liczba bomb wokol
+
+	if (k_p == 0) //wierzcholek czyli narazie sprawdzam dla skrajnych przypadkow
+	{
+		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_dol", k_p)); //sprawdz czy wokol bomby i dodaj je
+		return ile(ile_bomb); //tyle mamy bomb wokol
+	}
+	else if (k_p == 8) //wierzchoek
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("dol", k_p));
+		return ile(ile_bomb);
+	}
+	else if (k_p == 72) //wierzcholek
+	{
+		ile_bomb = (sprawdz("gora", k_p) + sprawdz("prawo", k_p) + sprawdz("prawo_gora", k_p));
+		return ile(ile_bomb);
+	}
+	else if (k_p == 80) //wierzcholek
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p));
+		return ile(ile_bomb);
+	}
+	else if (k_p >= 1 && k_p <= 7) //pierwzy wiersz
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("prawo_dol", k_p));
+		return ile(ile_bomb);
+	}
+	else if (k_p >= 73 && k_p <= 79) //ostatni wiersz
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("prawo_gora", k_p));
+		return ile(ile_bomb);
+	}
+	//dorobic inne przypadki czyli skrajne kolumny i reszte normalna
+	else
+	return '?';
+}
 
 auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora (Z, P, F)
 {
@@ -68,8 +197,12 @@ auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora
 		break;
 		case 'P': //odkrywamy pole
 		{
-			//wywolaj funkcje sprawdz czy w okolo sa bomby
-			//sprawdz czy bomba jak tak to koniec gry
+			if (v_bomb[k_p] == 'B') //jesli odslonimy bombe to koniec gry
+			{
+				exit(0);//tu funkcja koniec gry //IN PROGRESS
+			}
+			else
+			v[k_p] = sprawdz_sasiadujace_pola(k_p);
 		}
 		break;
 		case 'F': //zdjecie oznacznia pola jako zajetego przez mine
