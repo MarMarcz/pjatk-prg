@@ -57,13 +57,26 @@ void wyswietl_wszystkie_pola()
 short int ktore_pole(short int n_w, short int n_k) // na jakim polu z vectora bedziemy potem dzialac
 //czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do 81 pol wiec 80 index max
 {
-	//IN PROGRESS
 	return ( (n_w-1)*9 + (n_k-1) );//zwracamy jakie to bedzie pole vectora (index)
 	//obliczenie jak to zrobilam mam na karetce
 }
 
-//Tu bedzie funkcja dla konca gry Przegranej + musze dorobic dla Wygranej
-
+//Tu bedzie funkcja dla Wygranej
+void przegrana() //gracz trfil na mine wiec konczy sie gra //pokazuje nam wszystkie pola z minami
+{
+	for (int i=0; i < v.size(); i++ ) //dla kazdego pola sprawdz
+	{
+		if (v_bomb[i] == 'B') //jesli byla tam mina to
+		{
+			if (v[i] == 'X') //sprawdz czy gracz dobrze obstawil jesli tak to
+			{
+				v[i] = '+';
+			}
+			else //jesli nie zaznaczyl tego pola jako zaminowane to
+				v[i] = '*';
+		}
+	}
+}
 
 short int sprawdz(std::string kierunek, short int k_p) //sprawdza czy w danym kierunku znajduje sie bomba
 {
@@ -171,19 +184,32 @@ char sprawdz_sasiadujace_pola(short int k_p) //funkcja sprawdzajaca sasiadujece 
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= 1 && k_p <= 7) //pierwzy wiersz
+	else if (k_p >= 1 && k_p <= 7) //pierwzy wiersz bez wierzcholka
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("prawo_dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= 73 && k_p <= 79) //ostatni wiersz
+	else if (k_p >= 73 && k_p <= 79) //ostatni wiersz bez wierzcholka
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("prawo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	//dorobic inne przypadki czyli skrajne kolumny i reszte normalna
-	else
-	return '?';
+	else if (k_p == 9 || k_p == 18 || k_p == 27 || k_p == 36 || k_p == 45 || k_p == 54 || k_p == 63) //lewa kolumna //Pomysl nad optymalizacja!!
+	{
+		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_gora", k_p) + sprawdz("prawo_dol", k_p));
+		return ile(ile_bomb);
+	}
+	else if (k_p == 17 || k_p == 26 || k_p == 35 || k_p == 44 || k_p == 53 || k_p == 62 || k_p == 71) //prawa kolumna //Pomysl nad optymalizacja!!
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("lewo_dol", k_p));
+		return ile(ile_bomb);
+	}
+	else //czyli reszta normalnych co sasiaduja z 8 polami
+	{
+		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_gora", k_p) +
+			sprawdz("lewo_gora", k_p) + sprawdz("prawo_dol", k_p) + sprawdz("lewo_dol", k_p));
+		return ile(ile_bomb);
+	}
 }
 
 auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora (Z, P, F)
@@ -197,11 +223,13 @@ auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora
 		break;
 		case 'P': //odkrywamy pole
 		{
-			if (v_bomb[k_p] == 'B') //jesli odslonimy bombe to koniec gry
+			if (v_bomb[k_p] == 'B') //jesli odslonimy bombe to koniec gry //przegrywamy
 			{
-				exit(0);//tu funkcja koniec gry //IN PROGRESS
+				przegrana();
+				wyswietl_wszystkie_pola();
+				exit(0);
 			}
-			else
+			else //inne gdy odslonimy ale nie ma tam bobmy wiec sprawdzy czy z jakimis sasiaduje
 			v[k_p] = sprawdz_sasiadujace_pola(k_p);
 		}
 		break;
