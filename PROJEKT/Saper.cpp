@@ -13,6 +13,7 @@ int main()
 
 	while (true)
 	{
+		system("clear");
 		wyswietl_wszystkie_pola();
 		std::cout << "\nWpisz: nr.wiersza, nr.kolumny, dzialanie\n";
 		std::cout << "Dzialanie:\nZ-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine\n";
@@ -31,6 +32,13 @@ int main()
 		}
 
 		akcja( ktore_pole(nr_wiersza, nr_kolumny), operacja);
+
+		if (wygrana() == true)
+		{
+			std::cout << "GRATULACJE, WYGRALES!\n";
+			wyswietl_wszystkie_pola();
+			exit(0);
+		}
 	}
 return 0;
 }

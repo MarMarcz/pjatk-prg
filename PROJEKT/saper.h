@@ -3,8 +3,7 @@
 #include <algorithm> //zeby dzialalo fill
 #include <cstdlib> //zeby dzialalo rand() i exit(0)
 #include <ctime> //zeby dzialalo srand()
-//#ifndef saper_h
-//#define saper_h
+#include <unistd.h> //zeby dzialalo usleep
 
 auto v = std::vector<char> (81); //vector ten wyswietlany
 auto v_bomb = std::vector<char> (81); //vector ktory zawiera bomby
@@ -61,7 +60,6 @@ short int ktore_pole(short int n_w, short int n_k) // na jakim polu z vectora be
 	//obliczenie jak to zrobilam mam na karetce
 }
 
-//Tu bedzie funkcja dla Wygranej
 void przegrana() //gracz trfil na mine wiec konczy sie gra //pokazuje nam wszystkie pola z minami
 {
 	for (int i=0; i < v.size(); i++ ) //dla kazdego pola sprawdz
@@ -77,6 +75,26 @@ void przegrana() //gracz trfil na mine wiec konczy sie gra //pokazuje nam wszyst
 		}
 	}
 }
+
+bool wygrana() //funkcja sprawdzajaca czy wygralismy
+{
+	short int l_p_o = 0; //liczba poprawnych oznaczen bomb
+	short int ilosc_bomb = 10;
+	for (int i=0; i<v.size(); i++)
+	{
+		if (v_bomb[i] == 'n' && v[i] == 'X')//jesli nie ma tam bomby a my sie pomylilismy i zaznaczylosmy jakby byla tam bomba
+			return false; //to zwroc falsz i nie wygralismy jeszcze bo mamy blad
+		else if (v_bomb[i] == 'B' && v[i] == 'X')
+		{
+			l_p_o = l_p_o + 1;
+		}
+	}
+	if (l_p_o == ilosc_bomb)
+		return true;
+	else
+		return false;
+}
+
 
 short int sprawdz(std::string kierunek, short int k_p) //sprawdza czy w danym kierunku znajduje sie bomba
 {
@@ -231,6 +249,7 @@ auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora
 			}
 			else //inne gdy odslonimy ale nie ma tam bobmy wiec sprawdzy czy z jakimis sasiaduje
 			v[k_p] = sprawdz_sasiadujace_pola(k_p);
+//Moze dorobic ze nie mozna odslanic pola zaznaczonego jako mina??
 		}
 		break;
 		case 'F': //zdjecie oznacznia pola jako zajetego przez mine
@@ -238,10 +257,17 @@ auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora
 			if (v[k_p] == 'X') //jesli zaznaczylsmy wczesniej jako zaminowane -> zdjejmij oznaczenie
 				v[k_p] = ' ';
 			else
+			{
 				std::cout << "Pole nie jest oznaczone jako zaminowane wiec nie mozna zdjac oznaczenia\n";
+				usleep(2000000);
+			}
 		}
 		break;
-		default: std::cout << "Zly operator!\n"; //jesli ktos poda cos innego niz Z, P, F
+		default:
+		{
+			std::cout << "Zly operator!\n"; //jesli ktos poda cos innego niz Z, P, F
+			usleep(2000000);
+		}
 	}
 }
 
