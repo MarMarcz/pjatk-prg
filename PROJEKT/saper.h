@@ -5,12 +5,13 @@
 #include <ctime> //zeby dzialalo srand()
 #include <unistd.h> //zeby dzialalo usleep
 
-auto v = std::vector<char> (81); //vector ten wyswietlany //TU ZMIANA //900
-auto v_bomb = std::vector<char> (81); //vector ktory zawiera bomby //TU ZMIANA //900
+short int rozmiar_pola = 30; //pole 30 na 30 //30*30 -> tyle lacznie jest pol
 
-//pole 30 na 30 //zaznaczam gdzie musze wprowadzic zmiany
-//short int rozmiar_pola = 30; //30*30 -> tyle lacznie jest pol 
-short int ilosc_bomb = 10;
+auto v = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ten wyswietlany //900
+auto v_bomb = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ktory zawiera bomby //900
+
+short int ilosc_bomb = 15;
+
 void generuj_bomby()
 {
 	std::fill(v_bomb.begin(), v_bomb.end(), 'n');
@@ -18,7 +19,7 @@ void generuj_bomby()
 	srand(time(NULL));
 	for (int i = 0; i < powtarzaj; i++) //petla generowania bomb w losowych miejscach
 	{
-		int r = rand() % 81; //wylosuje losowa liczbe 0-80 //TU ZMIANA //900 //30*30
+		int r = rand() % (rozmiar_pola * rozmiar_pola); //wylosuje losowa liczbe 0-899 //900 //30*30
 		if (v_bomb[r] == 'n')
 			v_bomb[r] = 'B';
 		else if (v_bomb[r] == 'B') //jesli juz tam byla bomba to powtorz
@@ -31,22 +32,25 @@ short int y = 0; //ktory z kolei element wektora
 void wyswietl_wiersz()
 {
 	short int liczba = 0; //ilosc elementow w wierszu pozniej
-	while (liczba <= 8) //liczba kolumn -1 //tyle razy chce wsywietlic elemnt w wierszu //TU ZMIANA //29 //30-1
+	while (liczba <= (rozmiar_pola-1)) //liczba kolumn -1 //tyle razy chce wsywietlic elemnt w wierszu //29
 	{
-		std::cout << v[y];
+		std::cout << v[y] << "|";
 		y++;
 		liczba++;
 	}
-	if (y == 81) //TU ZMIANA //900 //30*30
+	if (y == rozmiar_pola*rozmiar_pola) //900 //30*30
 		y = 0;
 }
 
 void wyswietl_wszystkie_pola()
 {
-	std::cout << " 123456789" << "\n"; //najpeirw wyswietlamy wszystkie kolumny //TU ZMIANA
-	for (int i=1; i <= 9; i++ ) //wyswietlaj kazdy wiersz //TU ZMIANA //30
+	std::cout << "  1 2 3 4 5 6 7 8 9 101112131415161718192021222324252627282930" << "\n"; //najpeirw wyswietlamy wszystkie kolumny
+	for (int i=1; i <= rozmiar_pola; i++ ) //wyswietlaj kazdy wiersz //30
 	{
-		std::cout << i; //najpierw numer wiersza
+		if (i < 10)
+			std::cout << " " << i;  //najpierw numer wiersza
+		else
+			std::cout << i;
 		wyswietl_wiersz();
 		std::cout << "\n";
 	}
@@ -57,9 +61,9 @@ void wyswietl_wszystkie_pola()
 }
 
 short int ktore_pole(short int &n_w, short int &n_k) // na jakim polu z vectora bedziemy potem dzialac
-//czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do 81 pol wiec 80 index max
+//czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do 900 pol wiec 899 index max
 {
-	return ( (n_w-1)*9 + (n_k-1) );//zwracamy jakie to bedzie pole vectora (index) //TU ZMIANA //30
+	return ( (n_w-1)*rozmiar_pola + (n_k-1) );//zwracamy jakie to bedzie pole vectora (index)
 	//obliczenie jak to zrobilam mam na karetce
 }
 
@@ -114,37 +118,37 @@ short int sprawdz(std::string kierunek, short int k_p) //sprawdza czy w danym ki
 			return 0;
 	}else if (kierunek == "gora")
 	{
-		if (v_bomb[k_p - 9] == 'B') //TU ZMIANA //30
+		if (v_bomb[k_p - rozmiar_pola] == 'B') //30
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "dol")
 	{
-		if (v_bomb[k_p + 9] == 'B') //TU ZMIANA //30
+		if (v_bomb[k_p + rozmiar_pola] == 'B') //30
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "lewo_gora")
 	{
-		if (v_bomb[k_p - 10] == 'B') //TU ZMIANA //30+1
+		if (v_bomb[k_p - (rozmiar_pola + 1) ] == 'B')  //30+1
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "lewo_dol")
 	{
-		if (v_bomb[k_p + 8] == 'B') //TU ZMIANA //30-1
+		if (v_bomb[k_p + (rozmiar_pola - 1)] == 'B') //30-1
 			return 1;
 		else
 			return 0;
 	}else if (kierunek == "prawo_gora")
 	{
-		if (v_bomb[k_p - 8] == 'B') //TU ZMIANA //30-1
+		if (v_bomb[k_p - (rozmiar_pola - 1)] == 'B') //30-1
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "prawo_dol")
 	{
-		if (v_bomb[k_p + 10] == 'B') //TU ZMIANA //30+1
+		if (v_bomb[k_p + (rozmiar_pola + 1)] == 'B') //30+1
 			return 1;
 		else
 			return 0;
@@ -180,49 +184,53 @@ char ile(short int const& a) //sprawdza ile jest bomb i jakby przerzuca to na ch
 	}
 }
 
-char sprawdz_sasiadujace_pola(short int k_p) //funkcja sprawdzajaca sasiadujece pola zwracajaca ilosc bomb wokol lub . bo nie bedzie bomb
+char sprawdz_sasiadujace_pola(short int const& k_p) //funkcja sprawdzajaca sasiadujece pola zwracajaca ilosc bomb wokol lub . bo nie bedzie bomb
 {
 	short int ile_bomb; //liczba bomb wokol
 
-	if (k_p == 0) //wierzcholek czyli narazie sprawdzam dla skrajnych przypadkow
+	if (k_p == 0) //leaw gora wierzcholek czyli narazie sprawdzam dla skrajnych przypadkow
 	{
 		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_dol", k_p)); //sprawdz czy wokol bomby i dodaj je
 		return ile(ile_bomb); //tyle mamy bomb wokol
 	}
-	else if (k_p == 8) //prawy gora wierzchoek //TU ZMIANA //30-1
+	else if (k_p == (rozmiar_pola-1)) //prawy gora wierzchoek //30-1
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == 72) //lewa dol wierzcholek //TU ZMIANA //870
+	else if (k_p == (rozmiar_pola*rozmiar_pola)-rozmiar_pola) //lewa dol wierzcholek //870
 	{
 		ile_bomb = (sprawdz("gora", k_p) + sprawdz("prawo", k_p) + sprawdz("prawo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == 80) //prawy dol wierzcholek //TU ZMIANA //899
+	else if (k_p == ( (rozmiar_pola * rozmiar_pola)-1) ) //prawy dol wierzcholek //899
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= 1 && k_p <= 7) //pierwzy wiersz bez wierzcholka //TU ZMIANA //28
+	else if (k_p >= 1 && k_p <= (rozmiar_pola - 2)) //pierwzy wiersz bez wierzcholka //28
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("prawo_dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= 73 && k_p <= 79) //ostatni wiersz bez wierzcholka //TU ZMIANA //871-898
+	else if (k_p >= ((rozmiar_pola * rozmiar_pola) - rozmiar_pola + 1) && k_p <= (rozmiar_pola * rozmiar_pola)-2) //ostatni wiersz bez wierzcholka //871-898
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("prawo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == 9 || k_p == 18 || k_p == 27 || k_p == 36 || k_p == 45 || k_p == 54 || k_p == 63) //lewa kolumna //Pomysl nad optymalizacja!! //TU ZMIANA
+	else if (k_p == 30 || k_p == 60 || k_p == 90 || k_p == 120 || k_p == 150 || k_p == 180 || k_p == 210 ||
+		k_p == 240 || k_p == 270 || k_p == 300 || k_p == 330 || k_p == 360 || k_p == 390 || k_p == 420 ||
+		k_p == 450 || k_p == 480 || k_p == 510 || k_p == 570 || k_p == 600 || k_p == 630 || k_p == 660 ||
+		k_p == 690 || k_p == 720 || k_p == 750 || k_p == 780 || k_p == 810 || k_p == 840) //lewa kolumna //Pomysl nad optymalizacja!!
 	{
-//30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,570,600,630,660,690,720,750,780,810,840
 		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_gora", k_p) + sprawdz("prawo_dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == 17 || k_p == 26 || k_p == 35 || k_p == 44 || k_p == 53 || k_p == 62 || k_p == 71) //prawa kolumna //Pomysl nad optymalizacja!! //TU ZMIANA
+	else if (k_p == 59 || k_p == 89 || k_p == 119 || k_p == 149 || k_p == 179 || k_p == 209 || k_p == 239 ||
+		k_p == 269 || k_p == 299 || k_p == 329 || k_p == 359 || k_p == 389 || k_p == 419 || k_p == 449 ||
+		k_p == 479 || k_p == 509 || k_p == 569 || k_p == 599 || k_p == 629 || k_p == 659 || k_p == 689 ||
+		k_p == 719 || k_p == 749 || k_p == 779 || k_p == 809 || k_p == 839 || k_p == 869) //prawa kolumna //Pomysl nad optymalizacja!!
 	{
-//59,89,119,149,179,209,239,269,299,329,359,389,419,449,479,509,569,599,629,659,689,719,749,779,809,839,869
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("lewo_dol", k_p));
 		return ile(ile_bomb);
 	}
@@ -234,7 +242,7 @@ char sprawdz_sasiadujace_pola(short int k_p) //funkcja sprawdzajaca sasiadujece 
 	}
 }
 
-auto akcja(short int k_p, char op) //funkcja dzialania w zaleznosci od operatora (Z, P, F)
+auto akcja(short int const&  k_p, char op) //funkcja dzialania w zaleznosci od operatora (Z, P, F)
 {
 	switch (op) //dzaialnie w zaleznosci od operatora
 	{

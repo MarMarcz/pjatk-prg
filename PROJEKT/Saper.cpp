@@ -1,8 +1,6 @@
 #include <iostream>
 #include "./saper.h"
 
-//najpeirw testuje sobie na mniejszej planszy 9 na 9
-
 int main()
 {
 	std::fill(v.begin(), v.end(), ' ');
@@ -15,13 +13,13 @@ int main()
 	{
 		system("clear");
 		wyswietl_wszystkie_pola();
-		std::cout << "\nWpisz: nr.wiersza, nr.kolumny, dzialanie\n";
-		std::cout << "Dzialanie:\nZ-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine\n";
+		std::cout << "\nWPISZ: nr.wiersza nr.kolumny dzialanie (PO SPACJI)\n";
+		std::cout << "( MOZLIWE DZIALANIA:  Z-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine )\n";
 
 		try { //wpisujemy jaka akcje chcemy wykonac
 			std::cin >> nr_wiersza >> nr_kolumny >> operacja;
 
-			if (std::cin.fail() || nr_wiersza > 9 || nr_wiersza < 1 || nr_kolumny > 9 || nr_kolumny < 1)
+			if (std::cin.fail() || nr_wiersza > rozmiar_pola || nr_wiersza < 1 || nr_kolumny > rozmiar_pola || nr_kolumny < 1)
 			{
 				std::cin.clear();
 				throw "Zle dane";
