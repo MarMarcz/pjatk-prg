@@ -7,8 +7,8 @@
 
 short int rozmiar_pola = 30; //pole 30 na 30 //30*30 -> tyle lacznie jest pol
 
-auto v = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ten wyswietlany //900
-auto v_bomb = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ktory zawiera bomby //900
+auto v = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ten wyswietlany
+auto v_bomb = std::vector<char> (rozmiar_pola*rozmiar_pola); //vector ktory zawiera bomby
 
 short int ilosc_bomb = 15;
 
@@ -19,7 +19,7 @@ void generuj_bomby()
 	srand(time(NULL));
 	for (int i = 0; i < powtarzaj; i++) //petla generowania bomb w losowych miejscach
 	{
-		int r = rand() % (rozmiar_pola * rozmiar_pola); //wylosuje losowa liczbe 0-899 //900 //30*30
+		int r = rand() % (rozmiar_pola * rozmiar_pola); //wylosuje losowa liczbe od 0 do (rozmiar_pola*rozmiar_pola-1)
 		if (v_bomb[r] == 'n')
 			v_bomb[r] = 'B';
 		else if (v_bomb[r] == 'B') //jesli juz tam byla bomba to powtorz
@@ -32,20 +32,31 @@ short int y = 0; //ktory z kolei element wektora
 void wyswietl_wiersz()
 {
 	short int liczba = 0; //ilosc elementow w wierszu pozniej
-	while (liczba <= (rozmiar_pola-1)) //liczba kolumn -1 //tyle razy chce wsywietlic elemnt w wierszu //29
+	std::cout << "|";
+	while (liczba <= (rozmiar_pola-1)) //liczba kolumn -1 //tyle razy chce wsywietlic elemnt w wierszu
 	{
 		std::cout << v[y] << "|";
 		y++;
 		liczba++;
 	}
-	if (y == rozmiar_pola*rozmiar_pola) //900 //30*30
+	if (y == rozmiar_pola*rozmiar_pola)
 		y = 0;
 }
 
 void wyswietl_wszystkie_pola()
 {
-	std::cout << "  1 2 3 4 5 6 7 8 9 101112131415161718192021222324252627282930" << "\n"; //najpeirw wyswietlamy wszystkie kolumny
-	for (int i=1; i <= rozmiar_pola; i++ ) //wyswietlaj kazdy wiersz //30
+	std::cout << "  ";
+	for (short int j=1; j <= rozmiar_pola; j++) //najpeirw wyswietlamy wszystkie kolumny
+	{
+		if (j <= 10)
+			std::cout << " " << j;
+		else
+			std::cout << j;
+	}
+
+	std::cout << "\n";
+
+	for (int i=1; i <= rozmiar_pola; i++ ) //wyswietlaj kazdy wiersz
 	{
 		if (i < 10)
 			std::cout << " " << i;  //najpierw numer wiersza
@@ -61,10 +72,9 @@ void wyswietl_wszystkie_pola()
 }
 
 short int ktore_pole(short int &n_w, short int &n_k) // na jakim polu z vectora bedziemy potem dzialac
-//czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do 900 pol wiec 899 index max
+//czyli obliczamy na jakim indexie bedziemy dzialac, ograniczenie do rozmiar_pola*rozmiar_pola //i pamiatamy ze index od 0
 {
 	return ( (n_w-1)*rozmiar_pola + (n_k-1) );//zwracamy jakie to bedzie pole vectora (index)
-	//obliczenie jak to zrobilam mam na karetce
 }
 
 void przegrana() //gracz trfil na mine wiec konczy sie gra //pokazuje nam wszystkie pola z minami
@@ -81,6 +91,7 @@ void przegrana() //gracz trfil na mine wiec konczy sie gra //pokazuje nam wszyst
 				v[i] = '*';
 		}
 	}
+	std::cout << "Przegrales :(\n'+' -> oznacza ze dobrze zaznaczyles bombe\n'*' -> oznacza polozenie bomb ktorych nie zaznaczyles\n";
 }
 
 bool wygrana() //funkcja sprawdzajaca czy wygralismy
@@ -118,37 +129,37 @@ short int sprawdz(std::string kierunek, short int k_p) //sprawdza czy w danym ki
 			return 0;
 	}else if (kierunek == "gora")
 	{
-		if (v_bomb[k_p - rozmiar_pola] == 'B') //30
+		if (v_bomb[k_p - rozmiar_pola] == 'B')
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "dol")
 	{
-		if (v_bomb[k_p + rozmiar_pola] == 'B') //30
+		if (v_bomb[k_p + rozmiar_pola] == 'B')
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "lewo_gora")
 	{
-		if (v_bomb[k_p - (rozmiar_pola + 1) ] == 'B')  //30+1
+		if (v_bomb[k_p - (rozmiar_pola + 1) ] == 'B')
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "lewo_dol")
 	{
-		if (v_bomb[k_p + (rozmiar_pola - 1)] == 'B') //30-1
+		if (v_bomb[k_p + (rozmiar_pola - 1)] == 'B')
 			return 1;
 		else
 			return 0;
 	}else if (kierunek == "prawo_gora")
 	{
-		if (v_bomb[k_p - (rozmiar_pola - 1)] == 'B') //30-1
+		if (v_bomb[k_p - (rozmiar_pola - 1)] == 'B')
 			return 1;
 		else
 			return 0;
 	} else if (kierunek == "prawo_dol")
 	{
-		if (v_bomb[k_p + (rozmiar_pola + 1)] == 'B') //30+1
+		if (v_bomb[k_p + (rozmiar_pola + 1)] == 'B')
 			return 1;
 		else
 			return 0;
@@ -187,51 +198,59 @@ char ile(short int const& a) //sprawdza ile jest bomb i jakby przerzuca to na ch
 char sprawdz_sasiadujace_pola(short int const& k_p) //funkcja sprawdzajaca sasiadujece pola zwracajaca ilosc bomb wokol lub . bo nie bedzie bomb
 {
 	short int ile_bomb; //liczba bomb wokol
+	//Najpierw sprawdzam skrajne przypadki
+	short int lewa_kolumna = rozmiar_pola;
+	do {
+		if (k_p == lewa_kolumna)
+		{
+			ile_bomb = (sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_gora", k_p) + sprawdz("prawo_dol", k_p));
+			return ile(ile_bomb);
+		}
 
-	if (k_p == 0) //leaw gora wierzcholek czyli narazie sprawdzam dla skrajnych przypadkow
+		lewa_kolumna = lewa_kolumna + rozmiar_pola;
+
+	} while (lewa_kolumna < (rozmiar_pola * rozmiar_pola - rozmiar_pola));
+
+	short int prawa_kolumna = (2*rozmiar_pola)-1;
+	do {
+		if (k_p == prawa_kolumna)
+		{
+			ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("lewo_dol", k_p));
+			return ile(ile_bomb);
+		}
+
+		prawa_kolumna = prawa_kolumna + rozmiar_pola;
+
+	} while (prawa_kolumna < (rozmiar_pola*rozmiar_pola)-1);
+
+	if (k_p == 0) //lewa gora wierzcholek
 	{
 		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_dol", k_p)); //sprawdz czy wokol bomby i dodaj je
 		return ile(ile_bomb); //tyle mamy bomb wokol
 	}
-	else if (k_p == (rozmiar_pola-1)) //prawy gora wierzchoek //30-1
+	else if (k_p == (rozmiar_pola-1)) //prawy gora wierzchoek
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == (rozmiar_pola*rozmiar_pola)-rozmiar_pola) //lewa dol wierzcholek //870
+	else if (k_p == (rozmiar_pola*rozmiar_pola)-rozmiar_pola) //lewa dol wierzcholek
 	{
 		ile_bomb = (sprawdz("gora", k_p) + sprawdz("prawo", k_p) + sprawdz("prawo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p == ( (rozmiar_pola * rozmiar_pola)-1) ) //prawy dol wierzcholek //899
+	else if (k_p == ( (rozmiar_pola * rozmiar_pola)-1) ) //prawy dol wierzcholek
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= 1 && k_p <= (rozmiar_pola - 2)) //pierwzy wiersz bez wierzcholka //28
+	else if (k_p >= 1 && k_p <= (rozmiar_pola - 2)) //pierwzy wiersz bez wierzcholka
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_dol", k_p) + sprawdz("prawo_dol", k_p));
 		return ile(ile_bomb);
 	}
-	else if (k_p >= ((rozmiar_pola * rozmiar_pola) - rozmiar_pola + 1) && k_p <= (rozmiar_pola * rozmiar_pola)-2) //ostatni wiersz bez wierzcholka //871-898
+	else if (k_p >= ((rozmiar_pola * rozmiar_pola) - rozmiar_pola + 1) && k_p <= (rozmiar_pola * rozmiar_pola)-2) //ostatni wiersz bez wierzcholka
 	{
 		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("prawo_gora", k_p));
-		return ile(ile_bomb);
-	}
-	else if (k_p == 30 || k_p == 60 || k_p == 90 || k_p == 120 || k_p == 150 || k_p == 180 || k_p == 210 ||
-		k_p == 240 || k_p == 270 || k_p == 300 || k_p == 330 || k_p == 360 || k_p == 390 || k_p == 420 ||
-		k_p == 450 || k_p == 480 || k_p == 510 || k_p == 570 || k_p == 600 || k_p == 630 || k_p == 660 ||
-		k_p == 690 || k_p == 720 || k_p == 750 || k_p == 780 || k_p == 810 || k_p == 840) //lewa kolumna //Pomysl nad optymalizacja!!
-	{
-		ile_bomb = (sprawdz("prawo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("prawo_gora", k_p) + sprawdz("prawo_dol", k_p));
-		return ile(ile_bomb);
-	}
-	else if (k_p == 59 || k_p == 89 || k_p == 119 || k_p == 149 || k_p == 179 || k_p == 209 || k_p == 239 ||
-		k_p == 269 || k_p == 299 || k_p == 329 || k_p == 359 || k_p == 389 || k_p == 419 || k_p == 449 ||
-		k_p == 479 || k_p == 509 || k_p == 569 || k_p == 599 || k_p == 629 || k_p == 659 || k_p == 689 ||
-		k_p == 719 || k_p == 749 || k_p == 779 || k_p == 809 || k_p == 839 || k_p == 869) //prawa kolumna //Pomysl nad optymalizacja!!
-	{
-		ile_bomb = (sprawdz("lewo", k_p) + sprawdz("gora", k_p) + sprawdz("dol", k_p) + sprawdz("lewo_gora", k_p) + sprawdz("lewo_dol", k_p));
 		return ile(ile_bomb);
 	}
 	else //czyli reszta normalnych co sasiaduja z 8 polami
@@ -259,13 +278,14 @@ auto akcja(short int const&  k_p, char op) //funkcja dzialania w zaleznosci od o
 		break;
 		case 'P': //odkrywamy pole
 		{
-			if (v[k_p] == 'X')
+			if (v[k_p] == 'X') //jesli ktos oznaczyl pole jako zaminowane nie moze go odkryc
 			{
 				std::cout << "Nie mozna odkryc pola oznaczonego jako bomba!\n";
 				usleep(2000000);
 			}
 			else if (v_bomb[k_p] == 'B') //jesli odslonimy bombe to koniec gry //przegrywamy
 			{
+				system("clear");
 				przegrana();
 				wyswietl_wszystkie_pola();
 				exit(0);

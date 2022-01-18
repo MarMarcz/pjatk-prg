@@ -3,6 +3,16 @@
 
 int main()
 {
+	try { //Mozemy zmieniac ilosc bomb jak i rozmiar planszy Ale jesli ilosc bomb > rozmiaru planszy to mamy blad
+		if (ilosc_bomb >= rozmiar_pola*rozmiar_pola)
+		{
+			throw "Za duza ilosc bomb";
+		}
+	} catch (...) {
+		std::cout << "Za duza ilosc bomb!\n";
+		return 0;
+	}
+
 	std::fill(v.begin(), v.end(), ' ');
 	generuj_bomby();
 
@@ -13,27 +23,34 @@ int main()
 	{
 		system("clear");
 		wyswietl_wszystkie_pola();
+		std::cout << "\nOznaczenia na planszy:\n";
+		std::cout << "' ' -> Pole jest nie odsloniete\n'.' -> Pole nie sasiaduje z zadna mina\n'liczba' -> Tyle bomb w okol pola\n";
 		std::cout << "\nWPISZ: nr.wiersza nr.kolumny dzialanie (PO SPACJI)\n";
 		std::cout << "( MOZLIWE DZIALANIA:  Z-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine )\n";
+		std::cin >> nr_wiersza >> nr_kolumny >> operacja;
 
-		try { //wpisujemy jaka akcje chcemy wykonac
-			std::cin >> nr_wiersza >> nr_kolumny >> operacja;
+		while (std::cin.fail())
+		{
+			std::cin.clear();
+			std::cin.ignore();
+			std::cin >> nr_wiersza >> nr_kolumny >> operacja; //ewentualnie jakies czyszczenie ekranu
+		}
 
-			if (std::cin.fail() || nr_wiersza > rozmiar_pola || nr_wiersza < 1 || nr_kolumny > rozmiar_pola || nr_kolumny < 1)
-			{
-				std::cin.clear();
-				throw "Zle dane";
-			}
-		} catch (...) {
-			std::cout << "Zle dane!\n";
-			return 0;
+		if (nr_wiersza > rozmiar_pola || nr_wiersza < 1 || nr_kolumny > rozmiar_pola || nr_kolumny < 1)
+		{
+			std::cin.clear();
+			std::cin.ignore();
+			std::cout << "Zle liczby!\n";
+			usleep(2000000);
+			continue;
 		}
 
 		akcja( ktore_pole(nr_wiersza, nr_kolumny), operacja);
 
 		if (wygrana() == true)
 		{
-			std::cout << "GRATULACJE, WYGRALES!\n";
+			system("clear");
+			std::cout << "GRATULACJE, WYGRALES! :D\n";
 			wyswietl_wszystkie_pola();
 			exit(0);
 		}
