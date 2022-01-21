@@ -4,12 +4,12 @@
 int main()
 {
 	try { //Mozemy zmieniac ilosc bomb jak i rozmiar planszy Ale jesli ilosc bomb > rozmiaru planszy to mamy blad
-		if (ilosc_bomb >= rozmiar_pola*rozmiar_pola)
+		if (ilosc_bomb >= rozmiar_pola*rozmiar_pola || ilosc_bomb < 1)
 		{
-			throw "Za duza ilosc bomb";
+			throw "Zla ilosc bomb";
 		}
 	} catch (...) {
-		std::cout << "Za duza ilosc bomb!\n";
+		std::cout << "Zla ilosc bomb!\n";
 		return 0;
 	}
 
@@ -26,11 +26,17 @@ int main()
 		std::cout << "\nOznaczenia na planszy:\n";
 		std::cout << "' ' -> Pole jest nie odsloniete\n'.' -> Pole nie sasiaduje z zadna mina\n'liczba' -> Tyle bomb w okol pola\n";
 		std::cout << "\nWPISZ: nr.wiersza nr.kolumny dzialanie (PO SPACJI)\n";
-		std::cout << "( MOZLIWE DZIALANIA:  Z-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine )\n";
+		std::cout << "( MOZLIWE DZIALANIA:  Z-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine )  (Z DUZEJ LITERY)\n";
 		std::cin >> nr_wiersza >> nr_kolumny >> operacja;
 
 		while (std::cin.fail())
 		{
+			system("clear");
+                	wyswietl_wszystkie_pola();
+			std::cout << "\nOznaczenia na planszy:\n";
+               		std::cout << "' ' -> Pole jest nie odsloniete\n'.' -> Pole nie sasiaduje z zadna mina\n'liczba' -> Tyle bomb w okol pola\n";
+                	std::cout << "\nWPISZ: nr.wiersza nr.kolumny dzialanie (PO SPACJI)\n";
+                	std::cout << "( MOZLIWE DZIALANIA:  Z-mina  P-odsloniecie pola  F-zdjecie oznaczenia pola jako zajetego przez mine )  (Z DUZEJ LITERY)\n";
 			std::cin.clear();
 			std::cin.ignore();
 			std::cin >> nr_wiersza >> nr_kolumny >> operacja; //ewentualnie jakies czyszczenie ekranu
